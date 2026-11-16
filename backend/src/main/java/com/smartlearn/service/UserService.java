@@ -20,12 +20,29 @@ public class UserService {
     }
 
     public User registerUser(String name, String email, String password, UserRole role) {
+        if (role != UserRole.STUDENT) {
+            throw new IllegalArgumentException("Public registration is limited to STUDENT accounts");
+        }
+
+        validateNewEmail(email);
+        User user = new User(name, email, passwordEncoder.encode(password), UserRole.STUDENT);
+        return userRepository.save(user);
+    }
+
+    public User createManagedUser(String name, String email, String password, UserRole role) {
+        if (role == UserRole.STUDENT) {
+            throw new IllegalArgumentException("Use public registration for STUDENT accounts");
+        }
+
+        validateNewEmail(email);
+        User user = new User(name, email, passwordEncoder.encode(password), role);
+        return userRepository.save(user);
+    }
+
+    private void validateNewEmail(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("Email already registered");
         }
-
-        User user = new User(name, email, passwordEncoder.encode(password), role);
-        return userRepository.save(user);
     }
 
     public Optional<User> findByEmail(String email) {

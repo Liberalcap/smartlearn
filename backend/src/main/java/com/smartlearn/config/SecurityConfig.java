@@ -26,6 +26,10 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/health", "/api/auth/**").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/courses/**")
+                        .hasRole("INSTRUCTOR")
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/courses/**")
+                        .authenticated()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

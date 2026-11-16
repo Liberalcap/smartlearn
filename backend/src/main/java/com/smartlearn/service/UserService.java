@@ -20,6 +20,10 @@ public class UserService {
     }
 
     public User registerUser(String name, String email, String password, UserRole role) {
+        if (role != UserRole.STUDENT) {
+            throw new IllegalArgumentException("Public registration is limited to STUDENT accounts");
+        }
+
         if (userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("Email already registered");
         }

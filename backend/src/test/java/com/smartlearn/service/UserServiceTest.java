@@ -66,6 +66,21 @@ class UserServiceTest {
     }
 
     @Test
+    void registerUserRejectsPrivilegedRole() {
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> userService.registerUser(
+                        "Administrator",
+                        "admin@example.com",
+                        "password123",
+                        UserRole.ADMIN));
+
+        assertEquals("Public registration is limited to STUDENT accounts", exception.getMessage());
+        verify(userRepository, never()).existsByEmail(any());
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
     void loginUsesPasswordEncoderToVerifyPassword() {
         User user = new User(
                 "Student",

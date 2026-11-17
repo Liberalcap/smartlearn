@@ -31,6 +31,7 @@ public class SecurityConfig {
                         .hasRole("INSTRUCTOR")
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/courses/**")
                         .authenticated()
+                        .requestMatchers("/api/enrollments/**").hasRole("STUDENT")
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
